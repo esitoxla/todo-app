@@ -6,9 +6,10 @@ export const addTodo = async (req, res, next) => {
      //put logical steps here
        //validate user input
        //write todo to database
-       await TodoModel.create(req.body);
+        const newTodo = await TodoModel.create(req.body);
+        const oneTodo = await newTodo.save();
        //respond to request
-       res.status(201).json('Todo was added!');
+       res.status(201).json(oneTodo);
     } catch (error) {
         next(error); 
     }
