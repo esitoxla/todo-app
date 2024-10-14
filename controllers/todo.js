@@ -1,15 +1,22 @@
 //helps you write todo to the data base
 import { TodoModel } from "../models/todo.js";
+import { addtodovalidator,updatetodovalidator } from "../validators/todo.js";
 
 export const addTodo = async (req, res, next) => {
  try {
      //put logical steps here
        //validate user input
+       const {error, value} = addtodovalidator.validate({
+            ...req.body,
+            icon: req.file?.filename
+       });
+       if (error){
+         return res.status(422).json(error)
+       }
        //write todo to database
-        const newTodo = await TodoModel.create(req.body);
-        const oneTodo = await newTodo.save();
+        await TodoModel.create(value);
        //respond to request
-       res.status(201).json(oneTodo);
+       res.status(201).json('todo was added');
     } catch (error) {
         next(error); 
     }
