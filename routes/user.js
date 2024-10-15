@@ -1,14 +1,18 @@
 import { Router } from "express";
-import { register, login, logout } from "../controllers/user.js";
+import {registerUser,loginUser,logoutUser,updateProfile} from "../controllers/user.js";
+import { uploadProfile } from "../middlewares/upload.js";
+
 
 
 const userRouter = Router();
 
-userRouter.post('/users/register', register);
+userRouter.post('/users/register', registerUser);
 
-userRouter.post('/users/login', login);
+userRouter.post('/users/login', loginUser);
 
-userRouter.post('/users/logout', logout);
+userRouter.post('/users/logout', logoutUser);
+
+userRouter.post("/user/me", uploadProfile.single("userAvt"), updateProfile);
 
 
 
