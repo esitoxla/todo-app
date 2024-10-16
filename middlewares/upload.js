@@ -1,7 +1,7 @@
 import multer from "multer";
 import { multerSaveFilesOrg } from "multer-savefilesorg";
 
-export const localUpload = multer({ dest: "uploads/" });
+//export const localUpload = multer({ dest: "uploads/" });
 
 export const remoteUpload = multer({
   storage: multerSaveFilesOrg({
