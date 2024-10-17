@@ -1,6 +1,7 @@
 import {
   registerUserValidator,
   loginUserValidator,
+  updateProfileValidator,
 } from "../validators/user.js";
 import { UserModel } from "../models/users.js";
 import bcrypt from "bcryptjs";
@@ -49,29 +50,42 @@ export const loginUser = async (req, res, next) => {
       return res.status(401).json("Invalid credentials!");
     }
     //sign a token for user
-    const token = jwt.sign(
-        {id:user.id},
-        process.env.JWT_PRIVATE_KEY,
-        {expiresIn:'24h'}
-     );
+    const token = jwt.sign({ id: user.id }, process.env.JWT_PRIVATE_KEY, {
+      expiresIn: "24h",
+    });
     //respond to request
     res.json({
-        message: 'User logged in!',
-        accessToken: token
+      message: "User logged in!",
+      accessToken: token,
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const getProfile = (req, res, next) =>{
-    res.json('user profile');
-}
+export const getProfile = async (req, res, next) => {
+  try {
+    //find authenticated user from database
+    const user = await UserModel.findById(req.auth.id).select({
+      password: false,
+    });
+    //respond to request
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const logoutUser = (req, res, next) => {
   res.json("user logged out!");
 };
 
 export const updateProfile = (req, res, next) => {
-  res.json("user profile is updated");
+  try {
+    //validate user input
+    const {} = updateProfileValidator.validate(req.body)
+    res.json("user profile is updated");
+  } catch (error) {
+    next(error)
+  }
 };
