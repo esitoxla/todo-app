@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import { remoteUpload , uploadProfile} from '../middlewares/upload.js';
-import { addTodo, deleteTodo, getTodo, updateTodo } from "../controllers/todo.js";
+import { addTodo, countTodos, deleteTodo, getTodo, getTodoById, updateTodo } from "../controllers/todo.js";
 
 //create a router
 const todoRouter = Router();
@@ -10,6 +10,10 @@ const todoRouter = Router();
 todoRouter.post("/todos",remoteUpload.single('icon'), addTodo);
 
 todoRouter.get("/todos", getTodo);
+
+todoRouter.get('/todos/count', countTodos);
+
+todoRouter.get('/todos/:id', getTodoById)
 
 todoRouter.patch("/todos/:id", updateTodo);
 

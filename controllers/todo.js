@@ -24,9 +24,11 @@ export const addTodo = async (req, res, next) => {
 
 export const getTodo = async (req, res, next) => {
   try {
-    const { filter = "{}", limit = 10, skip = 0 } = req.query;
+    const { filter = "{}", sort='{}', limit = 10, skip = 0 } = req.query;
     //fetch todos from database
-    const todos = await TodoModel.find(JSON.parse(filter))
+    const todos = await TodoModel
+      .find(JSON.parse(filter))
+      .sort(JSON.parse(sort))
       .limit(limit)
       .skip(skip);
     //return response
@@ -35,6 +37,31 @@ export const getTodo = async (req, res, next) => {
     next(error);
   }
 };
+
+export const countTodos = async (req, res, next)=> {
+ try {
+   const {filter = "{}"} = req.query
+   //count todos in database
+   const count = await TodoModel.countDocuments(JSON.parse(filter))
+   //respond to request
+   res.status(200).json({count})
+ } catch (error) {
+    next(error)
+ }
+}
+
+export const getTodoById = async (req, res, next) =>{
+  const {} = req.params;
+  //get todo by id from the database
+  const Todo = await TodoModel.findById(id);
+  res.json(Todo)
+}
+
+export const searchTodo = (req, res, next) =>{
+  const {title} = req.query;
+  const query = {};
+  if (title)query.title = {$regex:title, $options:"i"}
+}
 
 export const updateTodo = (req, res, next) => {
   res.json("Todo updateed!");
