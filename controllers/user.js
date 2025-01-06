@@ -80,11 +80,25 @@ export const logoutUser = (req, res, next) => {
   res.json("user logged out!");
 };
 
-export const updateProfile = (req, res, next) => {
+export const updateProfile = async (req, res, next) => {
   try {
     //validate user input
-    const {} = updateProfileValidator.validate(req.body)
-    res.json("user profile is updated");
+    const {error, value} = updateProfileValidator.validate({
+      ...req.body,
+      avatar: req.file?.filename
+    });
+    if (error) {
+      return res.status(422).json(error)
+    }
+    //update user
+    const updatedUser = await UserModel.findByIdAndUpdate
+    (req.auth.id, value, {
+      new: true
+    });
+    if (!updatedUser) {
+      return res.status(404).json("user not found");
+    }
+    res.status(200).json("user profile is updated");
   } catch (error) {
     next(error)
   }
